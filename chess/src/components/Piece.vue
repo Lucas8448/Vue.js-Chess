@@ -5,57 +5,72 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
+import wR from '../assets/pieces/w/r.png'
+import wN from '../assets/pieces/w/n.png'
+import wB from '../assets/pieces/w/b.png'
+import wQ from '../assets/pieces/w/q.png'
+import wK from '../assets/pieces/w/k.png'
+import wP from '../assets/pieces/w/p.png'
+import bR from '../assets/pieces/b/r.png'
+import bN from '../assets/pieces/b/n.png'
+import bB from '../assets/pieces/b/b.png'
+import bQ from '../assets/pieces/b/q.png'
+import bK from '../assets/pieces/b/k.png'
+import bP from '../assets/pieces/b/p.png'
 
 export default {
-    name: 'Piece',
+    props: {
+        piece: {
+            type: String,
+            required: true
+        }
+    },
     data() {
         return {
             img: null
         }
     },
-    methods:{
+    methods: {
         selectPiece() {
             console.log('piece selected')
         },
         getPieceImg() {
             switch (this.piece) {
-                case 'wP':
-                    this.img = require('../assets/w/p.png')
-                    break
                 case 'wR':
-                    this.img = require('../assets/w/r.png')
+                    this.img = wR
                     break
                 case 'wN':
-                    this.img = require('../assets/w/n.png')
+                    this.img = wN
                     break
                 case 'wB':
-                    this.img = require('../assets/w/b.png')
+                    this.img = wB
                     break
                 case 'wQ':
-                    this.img = require('../assets/w/q.png')
+                    this.img = wQ
                     break
                 case 'wK':
-                    this.img = require('../assets/w/k.png')
+                    this.img = wK
                     break
-                case 'bP':
-                    this.img = require('../assets/b/p.png')
+                case 'wP':
+                    this.img = wP
                     break
                 case 'bR':
-                    this.img = require('../assets/b/r.png')
+                    this.img = bR
                     break
                 case 'bN':
-                    this.img = require('../assets/b/n.png')
+                    this.img = bN
                     break
                 case 'bB':
-                    this.img = require('../assets/b/b.png')
+                    this.img = bB
                     break
                 case 'bQ':
-                    this.img = require('../assets/b/q.png')
+                    this.img = bQ
                     break
                 case 'bK':
-                    this.img = require('../assets/b/k.png')
+                    this.img = bK
+                    break
+                case 'bP':
+                    this.img = bP
                     break
                 default:
                     this.img = null
