@@ -1,1 +1,41 @@
 @import './base.css';
+
+/* style chess board */
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.chess {
+  padding-top: 10vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.evenRow .evenTile {
+  background-color: #769656;
+  height: 10vh;
+  width: 10vh;
+}
+
+.evenRow .oddTile {
+  background-color: #EEEED2;
+  height: 10vh;
+  width: 10vh;
+}
+
+.oddRow .evenTile {
+  background-color: #EEEED2;
+  height: 10vh;
+  width: 10vh;
+}
+
+.oddRow .oddTile {
+  background-color: #769656;
+  height: 10vh;
+  width: 10vh;
+}
+
