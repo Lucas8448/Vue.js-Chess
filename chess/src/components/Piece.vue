@@ -1,6 +1,6 @@
 <template>
     <div class="piece" @click="selectPiece">
-        <img :src="img" />
+        <img :src="img" draggable="false"/>
     </div>
 </template>
 
