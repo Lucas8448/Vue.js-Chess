@@ -1,6 +1,10 @@
 @import './base.css';
 
 /* style chess board */
+* {
+  padding: 0;
+  margin: 0;
+}
 
 #app {
   width: 100vw;
