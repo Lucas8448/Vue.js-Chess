@@ -19,28 +19,29 @@
   align-items: center;
 }
 
+.chess td {
+  width: 10vh;
+  height: 10vh;
+}
+
 .evenRow .evenTile {
   background-color: #769656;
-  height: 10vh;
-  width: 10vh;
 }
 
 .evenRow .oddTile {
   background-color: #EEEED2;
-  height: 10vh;
-  width: 10vh;
 }
 
 .oddRow .evenTile {
   background-color: #EEEED2;
-  height: 10vh;
-  width: 10vh;
 }
 
 .oddRow .oddTile {
   background-color: #769656;
-  height: 10vh;
-  width: 10vh;
+}
+
+.move {
+  background-color: #FF0000;
 }
 
 .piece img {
