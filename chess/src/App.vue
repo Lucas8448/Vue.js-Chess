@@ -14,8 +14,16 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import Piece from './components/Piece.vue'
+import { createChessModel } from './chessModel';
+import { predictMove } from './bestMove';
+import { trainModel } from './trainModel'; // Import the trainModel function
+import { ref, onUnmounted } from 'vue';
+import Piece from './components/Piece.vue';
+import { Tensor } from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
+import * as d3 from 'd3';
+import { loadGraphModel } from '@tensorflow/tfjs-converter';
+
 
 export default {
   name: 'App',
@@ -24,6 +32,8 @@ export default {
   },
   data() {
     return {
+      tensorsToDispose: [],
+      model: null,
       turn: 0,
       movePiece: null,
       startMove: null,
@@ -31,7 +41,56 @@ export default {
       board: [['wR', 'wN', 'wB', 'wK', 'wQ', 'wB', 'wN', 'wR'], ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'], ['bR', 'bN', 'bB', 'bK', 'bQ', 'bB', 'bN', 'bR']]
     }
   },
+  setup() {
+    console.log('Entering setup');
+    const tensorsToDispose = []; // Create an array to store tensors
+    tf.setBackend('webgl');
+    // Make sure to dispose of tensors when the component is unmounted
+    onUnmounted(() => {
+      tensorsToDispose.forEach(tensor => tensor.dispose());
+      trainingDataTensor.dispose();
+      labelsTensor.dispose();
+    });
+  },
+  mounted() {
+    console.log('Entering mounted');
+    this.model = loadGraphModel('model.json');
+    // Load the training data and labels here
+    const { trainingData, labels } = this.loadTrainingData();
+    const trainingDataTensor = tf.tensor2d(trainingData, [trainingData.length, 64]);
+    const labelsTensor = tf.tensor2d(labels, [labels.length, 64]);
+    const epochs = 10;
+
+    // Train the model and make predictions
+    trainModel(this.model, trainingData, labels, epochs).then(() => {
+      console.log('Training complete');
+      // Make predictions after training
+    });
+  },
   methods: {
+    async loadTrainingData() {
+      const trainingData = [];
+      const labels = [];
+      const data = await d3.csv('trainingData.csv');
+    
+      data.forEach(row => {
+        const boardState = [];
+        const nextMove = [];
+    
+        for (let i = 0; i < 64; i++) {
+          boardState.push(row[`board_${i}`]);
+          nextMove.push(row[`move_${i}`]);
+        }
+    
+        trainingData.push(boardState);
+        labels.push(nextMove);
+        
+        console.log(boardState)
+        console.log(nextMove)
+      });
+    
+      return { trainingData, labels };
+    },
     isPiece(piece) {
       return this.validPieces.includes(piece)
     },
@@ -230,8 +289,27 @@ export default {
           end: { row: endRow, col: endCol }
         };
         this.turn = (this.turn + 1) % 2;
+
+        // Make AI move if it's black's turn
+        if (this.turn === 1) {
+          this.makeAiMove();
+        }
       }
       this.$forceUpdate();
+    },
+    async makeAiMove() {
+      const boardState = this.boardToTensor(this.board);
+      this.tensorsToDispose.push(boardState);
+      const aiMove = await predictMove(this.model, boardState);
+      if (aiMove) {
+        this.squareSelected(aiMove.startRow, aiMove.startCol);
+        this.squareSelected(aiMove.endRow, aiMove.endCol);
+      }
+    },
+    boardToTensor(board) {
+      const tensor = tf.tensor2d(board.map(row => row.map(square => square ? square.piece : 0)), [8, 8]);
+      // Remove this line
+      return tensor;
     },
   }
 }
